@@ -96,7 +96,7 @@ func getTestEntityAmount() *types.Amount {
 
 // NewRosettaClient returns a new Rosetta API Client for tests or panics.
 func NewRosettaClient() (*client.APIClient, *types.NetworkIdentifier) {
-	rClient := client.NewAPIClient(client.NewConfiguration("http://localhost:8080", "rosetta-sdk-go", nil))
+	rClient := client.NewAPIClient(client.NewConfiguration("http://172.31.26.84:8080", "rosetta-sdk-go", nil))
 	nl, rErr, err := rClient.NetworkAPI.NetworkList(context.Background(), &types.MetadataRequest{})
 	if err != nil {
 		panic(err)

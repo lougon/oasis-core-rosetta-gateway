@@ -494,13 +494,15 @@ func (s *constructionAPIService) ConstructionPayloads(
 
 	return resp, nil
 }
-func (s *constructionAPIService) EstimateGas(
+
+// ConstructionEstimategas implements the /construction/estimategas endpoint.
+func (s *constructionAPIService) ConstructionEstimategas(
 	ctx context.Context,
 	request *EstimateGasRequestRequest,
 ) (*transaction.Gas, *types.Error) {
 	terr := ValidateNetworkIdentifier(ctx, s.oasisClient, request.NetworkIdentifier)
 	if terr != nil {
-		loggerCons.Error("ConstructionParse: network validation failed", "err", terr.Message)
+		loggerCons.Error("ConstructionEstimategas: network validation failed", "err", terr.Message)
 		return nil, terr
 	}
 	gas, err := s.oasisClient.EstimateGas(ctx, request.EstimateGasRequest)
