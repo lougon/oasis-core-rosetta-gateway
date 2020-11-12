@@ -137,6 +137,11 @@ var (
 		Message:   "not available in offline mode",
 		Retriable: false,
 	}
+	ErrInvalidEstimateGas = &types.Error{
+		Code:      21,
+		Message:   "EstimateGas error",
+		Retriable: false,
+	}
 
 	ErrorList = []*types.Error{
 		ErrUnableToGetChainID,
@@ -159,6 +164,7 @@ var (
 		ErrUnableToGetNodeStatus,
 		ErrTransactionNotFound,
 		ErrNotAvailableInOfflineMode,
+		ErrInvalidEstimateGas,
 	}
 )
 

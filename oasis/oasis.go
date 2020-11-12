@@ -81,6 +81,9 @@ type Client interface {
 
 	// GetStatus returns the status overview of the node.
 	GetStatus(ctx context.Context) (*control.Status, error)
+
+	// EstimateGas calculates the amount of gas required to execute the given transaction.
+	EstimateGas(ctx context.Context, req *consensus.EstimateGasRequest) (transaction.Gas, error)
 }
 
 // Block is a representation of the Oasis block metadata, converted to be more
@@ -333,6 +336,19 @@ func (c *grpcClient) GetStatus(ctx context.Context) (*control.Status, error) {
 		c.genesisHeight = status.Consensus.GenesisHeight
 	}
 	return status, err
+}
+func (c *grpcClient) EstimateGas(ctx context.Context, req *consensus.EstimateGasRequest) (transaction.Gas, error) {
+	conn, err := c.connect(ctx)
+	if err != nil {
+		return 0, err
+	}
+	client := consensus.NewConsensusClient(conn)
+	gas, err := client.EstimateGas(ctx, req)
+	if err != nil {
+		logger.Debug("EstimateGas: failed to get genesis document", "err", err)
+		return 0, err
+	}
+	return gas, err
 }
 
 // New creates a new Oasis gRPC client.

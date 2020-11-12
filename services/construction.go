@@ -10,7 +10,7 @@ import (
 	"fmt"
 
 	"github.com/coinbase/rosetta-sdk-go/server"
-	"github.com/coinbase/rosetta-sdk-go/types"
+	types "github.com/coinbase/rosetta-sdk-go/types"
 	"github.com/oasisprotocol/oasis-core/go/common/cbor"
 	"github.com/oasisprotocol/oasis-core/go/common/crypto/signature"
 	"github.com/oasisprotocol/oasis-core/go/common/logging"
@@ -494,6 +494,23 @@ func (s *constructionAPIService) ConstructionPayloads(
 
 	return resp, nil
 }
+func (s *constructionAPIService) EstimateGas(
+	ctx context.Context,
+	request *EstimateGasRequestRequest,
+) (*transaction.Gas, *types.Error) {
+	terr := ValidateNetworkIdentifier(ctx, s.oasisClient, request.NetworkIdentifier)
+	if terr != nil {
+		loggerCons.Error("ConstructionParse: network validation failed", "err", terr.Message)
+		return nil, terr
+	}
+	gas, err := s.oasisClient.EstimateGas(ctx, request.EstimateGasRequest)
+	if err != nil {
+		loggerNet.Error("NetworkStatus: unable to get node gas", "err", err)
+		return nil, ErrInvalidEstimateGas
+	}
+
+	return &gas, nil
+}
 
 // DecodeSignedTransaction decodes a signed transaction from a Base64-encoded CBOR blob.
 func DecodeSignedTransaction(raw string) (*transaction.SignedTransaction, error) {
@@ -521,4 +538,10 @@ func DecodeUnsignedTransaction(raw string) (*UnsignedTransaction, error) {
 		return nil, fmt.Errorf("CBOR decode failed: %w", err)
 	}
 	return &tx, nil
+}
+
+type EstimateGasRequestRequest struct {
+	NetworkIdentifier *types.NetworkIdentifier `json:"network_identifier"`
+	// EstimateGasRequest is a EstimateGas request.
+	EstimateGasRequest *consensus.EstimateGasRequest `json:"estimate_gas_request"`
 }
