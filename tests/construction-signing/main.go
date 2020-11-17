@@ -52,7 +52,6 @@ func main() { //nolint:funlen
 	fmt.Println("operations", common.DumpJSON(ops))
 
 	rc, ni := common.NewRosettaClient()
-
 	r2, re, err := rc.ConstructionAPI.ConstructionPreprocess(context.Background(), &types.ConstructionPreprocessRequest{
 		NetworkIdentifier: ni,
 		Operations:        ops,
@@ -126,7 +125,7 @@ func main() { //nolint:funlen
 		}
 		sigs = append(sigs, sig)
 	}
-
+	fmt.Println("sigs===", common.DumpJSON(sigs))
 	r5, re, err := rc.ConstructionAPI.ConstructionCombine(context.Background(), &types.ConstructionCombineRequest{
 		NetworkIdentifier:   ni,
 		UnsignedTransaction: r4.UnsignedTransaction,

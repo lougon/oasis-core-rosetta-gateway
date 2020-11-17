@@ -64,7 +64,10 @@ func (d *transactionsDecoder) DecodeTx(rawTx []byte, result *results.Result) err
 	}
 
 	txHash := sigTx.Hash()
+
 	rosettaTx := d.getOrCreateTx(txHash)
+	rosettaTx.Metadata = make(map[string]interface{})
+	rosettaTx.Metadata["nonce"] = tx.Nonce
 
 	// Decode events emitted by the transaction.
 	if result != nil {
